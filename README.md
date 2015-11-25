@@ -17,6 +17,8 @@ More then 6 skins already created
 
 Easy to use frontend using bootstrap, and jquery
 
+Does not require a database
+
 Open source!
 
 # To do list
