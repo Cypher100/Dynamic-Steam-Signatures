@@ -22,6 +22,8 @@ Open source!
 # To do list
 Clean inactive cached images
 
-Ability to upload custom images through the front end
+Ability to upload custom images through the frontend
 
 More countrys flags
+
+Accepting more ideas!
