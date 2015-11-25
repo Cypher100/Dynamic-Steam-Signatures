@@ -53,6 +53,6 @@
 				</div>
 			</div>
 			<br />
-			<div style="font-size:.85em;text-align:center;width:615px;margin:0 auto;">Created by Keenen W!<br/><br/></div>
+			<div style="font-size:.85em;text-align:center;width:615px;margin:0 auto;"><a href="https://github.com/Cypher100/Dynamic-Steam-Signatures/">Source Code</a><br/><br/></div>
 	</body>
 </html>
