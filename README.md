@@ -38,7 +38,7 @@ php5-curl
 php5-gd
 
 # Nginx
-The application  uses .htaccess for Apache2 to understand how to handle the signatures but Nginx requires a bit more configuration. Add this to the websites configuration if your using Nginx.
+The application  uses .htaccess for Apache2 to understand how to handle the signatures. But Nginx requires a bit more configuration. Add this to the websites configuration if your using Nginx.
 ```
 rewrite ^/pathhere/steam/images/(.*)/(.*).png$ /pathhere/steam/CreateImage.php?skin$
 ```
