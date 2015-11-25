@@ -27,3 +27,10 @@ Ability to upload custom images through the frontend
 More countrys flags
 
 Accepting more ideas!
+
+# Requirements
+php5
+
+php5-curl
+
+php5-gd
