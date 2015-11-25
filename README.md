@@ -29,6 +29,8 @@ More countrys flags
 Accepting more ideas!
 
 # Requirements
+Tested on Apache2, and Nginx
+
 php5
 
 php5-curl
