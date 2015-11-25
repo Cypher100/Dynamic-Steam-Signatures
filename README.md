@@ -9,3 +9,19 @@ The application is fully functional, but still would require some possible tune 
 
 # Website Demo
 https://www.lkt.me/demo/
+
+# Features
+Supports caching to reduce load on the server
+
+More then 6 skins already created
+
+Easy to use frontend using bootstrap, and jquery
+
+Open source!
+
+# To do list
+Clean inactive cached images
+
+Ability to upload custom images through the front end
+
+More countrys flags
