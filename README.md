@@ -18,15 +18,6 @@ Does not require a database
 
 Open source!
 
-# To do list
-Clean inactive cached images
-
-Ability to upload custom images through the frontend
-
-More countrys flags
-
-Accepting more ideas!
-
 # Requirements
 Tested on Apache2, and Nginx
 
