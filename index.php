@@ -23,7 +23,7 @@
 				<div id="SubmitBox">
 				Where to find CustomURL Name
 				<br/>
-				http://www.steamcommunity.com/id/<b>YourUrlName</b>
+				https://www.steamcommunity.com/id/<b>YourUrlName</b>
 				<br/><br/>
 				<form id="sform">
 					CustomURL Name: 

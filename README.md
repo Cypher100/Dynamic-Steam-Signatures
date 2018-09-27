@@ -7,9 +7,6 @@ The application is fully functional, but still would require some possible tune 
 # Screenshots
 ![Screenshot](http://i.imgur.com/h5cPsb9.png)
 
-# Website Demo
-https://www.lkt.me/demo/
-
 # Features
 Supports caching to reduce load on the server
 
@@ -33,14 +30,14 @@ Accepting more ideas!
 # Requirements
 Tested on Apache2, and Nginx
 
-php5
+php7.2
 
-php5-curl
+php7.2-curl
 
-php5-gd
+php7.2-gd
 
 # Nginx
 The application  uses .htaccess for Apache2 to understand how to handle the signatures. But Nginx requires a bit more configuration. Add this to the websites configuration if your using Nginx.
 ```
-rewrite ^/pathhere/steam/images/(.*)/(.*).png$ /pathhere/steam/CreateImage.php?skin$
+rewrite ^/pathtosteamroot/steam/images/(.*)/(.*).png$ /pathtosteamroot/steam/createimage.php?skin=$1&username=$2;
 ```

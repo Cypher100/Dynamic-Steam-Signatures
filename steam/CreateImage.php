@@ -1,5 +1,7 @@
 <?php
-    include('Config.php');
+    //Include configuration settings
+    include('config.php');
+
     //Set header information
     header("Content-type: image/png");
     header('Date: '.gmdate('D, d M Y H:i:s \G\M\T', time()));
@@ -36,9 +38,9 @@
 
     //Checks if it's a 64bit steam id or a custom username
     if(is_numeric($username) && strlen($username) == 17){
-        $xmlurl = "http://steamcommunity.com/profiles/" . $username . "/?xml=1";
+        $xmlurl = "https://steamcommunity.com/profiles/" . $username . "/?xml=1";
     } else {
-        $xmlurl = "http://steamcommunity.com/id/" . $username . "/?xml=1";
+        $xmlurl = "https://steamcommunity.com/id/" . $username . "/?xml=1";
     }
 
     //Download XML using curl, then load XML file.
@@ -103,7 +105,7 @@
     //Check if user has set country on their profile.
     if($xml->location){
         //Load country's information to detect which country image to place on final image.
-        include("Countrys.php");
+        include("countrys.php");
         if(strrpos($xml->location,",")){
             //Clean string, so only country is in the string.
             $countryinfo = substr($xml->location,strrpos($xml->location,", ")+2);
@@ -113,6 +115,7 @@
         } else {
             $countryinfo = substr($xml->location,0);
         }
+
         //If country found, load country image.
         if(array_key_exists($countryinfo,$countrys)){
             $imcountry = imagecreatefromgif("skins/countrys/".$countrys[$countryinfo].".gif");
@@ -124,14 +127,18 @@
         imagecopy($im, $imcountry, 56, 37, 0, 0, 16, 11);
         imagedestroy($imcountry);
     }
+
     //Paste status border
     imagecopy($im, $imstatus, 9, 8, 0, 0, 40, 40);
     imagedestroy($imstatus);
+
     //Place Avatar
     imagecopy($im, $imicon, 13, 12, 0, 0, 32, 32);
     imagedestroy($imicon);
+
     //Place username text
     imagettftext($im, $fsize, 0, 55, 17, $color, $fontbold, html_entity_decode($xml->steamID));
+
     //Place status text
     imagettftext($im, $fsize, 0, 55, 32, $color, $font, $xml->stateMessage);
 
