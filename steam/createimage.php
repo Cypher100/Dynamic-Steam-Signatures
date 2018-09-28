@@ -56,6 +56,7 @@
         readfile($steamidnotfound);
         exit;
     }
+
     //Check if steam profile is private
     if ($xml->visibilityState == "1") {
         readfile($steamidprivate);
@@ -90,7 +91,7 @@
             readfile($steamidprivate);
             exit;
     }
-    
+
     //Load chosen border
     $imstatus = imagecreatefrompng($border);
 
@@ -121,7 +122,7 @@
             $imcountry = imagecreatefromgif("skins/countrys/".$countrys[$countryinfo].".gif");
         }
     }
-    
+
     //Paste country flag
     if($imcountry){
         imagecopy($im, $imcountry, 56, 37, 0, 0, 16, 11);
