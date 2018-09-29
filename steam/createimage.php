@@ -38,36 +38,52 @@
 
     //Checks if it's a 64bit steam id or a custom username
     if(is_numeric($username) && strlen($username) == 17){
-        $xmlurl = "https://steamcommunity.com/profiles/" . $username . "/?xml=1";
+        $xmlProfileurl = "https://steamcommunity.com/profiles/" . $username . "/?xml=1";
     } else {
-        $xmlurl = "https://steamcommunity.com/id/" . $username . "/?xml=1";
+        $xmlProfileurl = "https://steamcommunity.com/id/" . $username . "/?xml=1";
     }
 
     //Download XML using curl, then load XML file.
     $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $xmlurl);
+        curl_setopt($ch, CURLOPT_URL, $xmlProfileurl);
         curl_setopt($ch, CURLOPT_TIMEOUT, 60);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        $xml = simplexml_load_string(curl_exec($ch));
+        $xmlProfile = simplexml_load_string(curl_exec($ch));
         curl_close($ch);
 
     //Check XML file if it's empty.
-    if (!$xml || !$xml->steamID) {
+    if (!$xmlProfile || !$xmlProfile->steamID) {
         readfile($steamidnotfound);
         exit;
     }
-
     //Check if steam profile is private
-    if ($xml->visibilityState == "1") {
+    if ($xmlProfile->visibilityState == "1") {
         readfile($steamidprivate);
         exit;
+    }
+
+    // Obtain XML for steam levels, retry if XML download fails
+    if($apikey){
+        $retry = 0;
+        do {
+            $ch = curl_init();
+                curl_setopt($ch, CURLOPT_URL, "https://api.steampowered.com/IPlayerService/GetBadges/v1/?key=" . $apikey .  "&steamid=" . $xmlProfile->steamID64 . "&format=xml");
+                curl_setopt($ch, CURLOPT_TIMEOUT, 60);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+                $xmlLevel = simplexml_load_string(curl_exec($ch));
+                curl_close($ch);
+                $retry++;
+                if($xmlLevel->player_level) {
+                    $retry = 4;
+                }
+        } while ($retry < 3);
     }
 
     //Load skin background
     $im = imagecreatefrompng($skinbackground);
 
     //Check users status, to set avatar border. Then place border on top of skin background.
-    switch($xml->onlineState) {
+    switch($xmlProfile->onlineState) {
         case "online":
             $color = imagecolorallocate($im, 111, 189, 255);
             $border = "skins/online.png";
@@ -78,11 +94,11 @@
             break;
         case "in-game":
             //Clean up stateMessage to make it look pretty on the final image.
-            $xml->stateMessage = str_replace("In-Game<br/>", "In-Game: ", $xml->stateMessage);
-            $xml->stateMessage = strip_tags($xml->stateMessage);
-            $xml->stateMessage = str_replace(" - Join", "", $xml->stateMessage);
-            if(strlen($xml->stateMessage) > 35){
-                $xml->stateMessage = substr($xml->stateMessage,0,(strlen($xml->stateMessage) - 35)*-1)."...";
+            $xmlProfile->stateMessage = str_replace("In-Game<br/>", "In-Game: ", $xmlProfile->stateMessage);
+            $xmlProfile->stateMessage = strip_tags($xmlProfile->stateMessage);
+            $xmlProfile->stateMessage = str_replace(" - Join", "", $xmlProfile->stateMessage);
+            if(strlen($xmlProfile->stateMessage) > 33){
+                $xmlProfile->stateMessage = substr($xmlProfile->stateMessage,0,(strlen($xmlProfile->stateMessage) - 33)*-1)."...";
             }
             $color = imagecolorallocate($im, 177, 251, 80);
             $border = "skins/ingame.png";
@@ -91,30 +107,30 @@
             readfile($steamidprivate);
             exit;
     }
-
+    
     //Load chosen border
     $imstatus = imagecreatefrompng($border);
 
     //Download avatar icon, then load it up.
     $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $xml->avatarIcon);
+        curl_setopt($ch, CURLOPT_URL, $xmlProfile->avatarIcon);
         curl_setopt($ch, CURLOPT_TIMEOUT, 60);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         $imicon = imagecreatefromstring(curl_exec($ch));
         curl_close($ch);
 
     //Check if user has set country on their profile.
-    if($xml->location){
+    if($xmlProfile->location){
         //Load country's information to detect which country image to place on final image.
         include("countrys.php");
-        if(strrpos($xml->location,",")){
+        if(strrpos($xmlProfile->location,",")){
             //Clean string, so only country is in the string.
-            $countryinfo = substr($xml->location,strrpos($xml->location,", ")+2);
+            $countryinfo = substr($xmlProfile->location,strrpos($xmlProfile->location,", ")+2);
             if(strrpos($countryinfo,"(")){
                 $countryinfo = trim(substr($countryinfo,strpos($countryinfo,"(")),"()");
             }
         } else {
-            $countryinfo = substr($xml->location,0);
+            $countryinfo = substr($xmlProfile->location,0);
         }
 
         //If country found, load country image.
@@ -127,6 +143,13 @@
     if($imcountry){
         imagecopy($im, $imcountry, 56, 37, 0, 0, 16, 11);
         imagedestroy($imcountry);
+        //Place User Level
+        if($xmlLevel->player_level) {
+            imagettftext($im, $fsize, 0, 75, 46, $color, $font, "Level: " . $xmlLevel->player_level);
+        }
+    } elseif($xmlLevel->player_level) {
+        //Place User Level
+        imagettftext($im, $fsize, 0, 55, 46, $color, $font, "Level: " . $xmlLevel->player_level);
     }
 
     //Paste status border
@@ -138,10 +161,10 @@
     imagedestroy($imicon);
 
     //Place username text
-    imagettftext($im, $fsize, 0, 55, 17, $color, $fontbold, html_entity_decode($xml->steamID));
+    imagettftext($im, $fsize, 0, 55, 17, $color, $fontbold, html_entity_decode($xmlProfile->steamID));
 
     //Place status text
-    imagettftext($im, $fsize, 0, 55, 32, $color, $font, $xml->stateMessage);
+    imagettftext($im, $fsize, 0, 55, 32, $color, $font, $xmlProfile->stateMessage);
 
     //Save image into temp folder for cache.
     imagepng($im, $sigpath);

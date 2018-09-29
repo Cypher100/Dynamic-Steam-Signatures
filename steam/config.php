@@ -1,4 +1,7 @@
 <?php
+//Steam API Key / Can be obtained at https://steamcommunity.com/dev
+$apikey = "";
+
 //Skin Settings
 $skinnotfound = "skins/skinnotfound.png";
 $steamidnotfound = "skins/steamidnotfound.png";
